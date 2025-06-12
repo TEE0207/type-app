@@ -13,7 +13,8 @@ const TodoList: React.FC <Props> = ({todos , setTodos}) => {
 
         {
             todos.map(todo =>(
-
+              // todos consist of 3 types so we're setting todo for todo
+               <li>{todo.todo}</li>
             ))
 
             
