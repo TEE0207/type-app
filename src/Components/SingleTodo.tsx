@@ -4,6 +4,7 @@ import { Todo } from './model';
 import { AiFillEdit } from 'react-icons/ai';
 import { RiDeleteBin4Fill } from "react-icons/ri";
 import { IoMdCheckmark } from "react-icons/io";
+import { Draggable } from 'react-beautiful-dnd';
 
 
  
@@ -22,8 +23,10 @@ type Props = {
 
      // copied when we hoved on it in 
     setTodos : React.Dispatch<React.SetStateAction<Todo[]>>
+
+    index : number
 }
-const SingleTodo : React.FC <Props> = ({todo , todos, setTodos }) => {
+const SingleTodo : React.FC <Props> = ({todo , todos, setTodos , index}) => {
 
 
     const [edit , setEdit] = useState <boolean>(false)
@@ -62,7 +65,19 @@ const SingleTodo : React.FC <Props> = ({todo , todos, setTodos }) => {
 
 
   return (
-    <form className='todos_single' onSubmit={(e) => handleEdit(e , todo.id)}>
+
+    <Draggable draggableId={todo.id.toString()} index = {index}>
+
+        {
+            (provided , snapshot) => (
+                   <form
+                    className={`todos_single ${snapshot.isDragging ? "drag" : ""}`}
+                     onSubmit={(e) =>handleEdit(e , todo.id)}
+                     {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    ref = {provided.innerRef}
+
+                      >
         {/* // Todo consist of 3 types so we're setting todo = todo because todo is a string that we set in the model */}
 
         {
@@ -104,6 +119,11 @@ const SingleTodo : React.FC <Props> = ({todo , todos, setTodos }) => {
             </span>
          </div>
     </form>
+            )
+        }
+  
+    </Draggable>
+    
   )
 }
 

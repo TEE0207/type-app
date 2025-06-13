@@ -2,23 +2,32 @@ import React from 'react'
 import "./style.css"
 import { Todo } from './model'
 import SingleTodo from './SingleTodo'
+import { Droppable } from 'react-beautiful-dnd'
 
 interface Props {
     todos : Todo[]
     setTodos : React.Dispatch<React.SetStateAction<Todo[]>>
+    setCompletedTodos : React.Dispatch<React.SetStateAction<Todo[]>>
+    completedTodos : Todo[]
 }
 
-const TodoList: React.FC <Props> = ({todos , setTodos}) => {
+const TodoList: React.FC <Props> = ({todos , setTodos , completedTodos ,setCompletedTodos}) => {
   return (
 
     <div className="container">
-       <div className="todos">
+
+      <Droppable droppableId='TodoList'>
+
+        {
+          (provided,snapshot) => (
+              <div className={`todos ${snapshot.isDraggingOver? "dragactive " : ""}`} ref ={provided.innerRef} {...provided.droppableProps}>
        <span className='todos_heading'> Active Tasks </span>
 
        {
-         todos.map((todo) => (
+         todos.map((todo , index) => (
 
          <SingleTodo 
+         index = {index}
             todo = {todo} 
             key= {todo.id}
             // This is taking all the array into SingleTodo
@@ -27,26 +36,43 @@ const TodoList: React.FC <Props> = ({todos , setTodos}) => {
               />
         ))
        }
-       </div>
 
-       <div className="todos_remove">
+                   {provided.placeholder}
+       </div>
+          )
+        }
+
+ 
+      </Droppable>
+      
+        <Droppable droppableId='TodosRemove'>
+           {
+
+            (provided , snapshot) => (
+                    <div className={ `todos_remove ${snapshot.isDraggingOver ? "dragcomplete" : ""}` } ref ={provided.innerRef} {...provided.droppableProps}>
           
           <span className='todos_heading'> Completed Tasks </span>
 
        {
-         todos.map((todo) => (
+         completedTodos.map((todo, index) => (
 
-         <SingleTodo 
+         <SingleTodo
+           index = {index} 
             todo = {todo} 
             key= {todo.id}
             // This is taking all the array into SingleTodo
-            todos = {todos}
-            setTodos = {setTodos}
+            todos = {completedTodos}
+            setTodos = {setCompletedTodos}
               />
         ))
        }
-
+                 {provided.placeholder}
        </div>
+            )
+           }
+
+        </Droppable>
+       
 
 
     </div>
